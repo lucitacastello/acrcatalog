@@ -1,7 +1,6 @@
-package com.acrdev.acrcatalog.resources;
+package com.acrdev.acrcatalog.controllers;
 
 import com.acrdev.acrcatalog.dto.CategoryDTO;
-import com.acrdev.acrcatalog.entities.Category;
 import com.acrdev.acrcatalog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
-public class CategoryResources {
+public class CategoryController {
 
     @Autowired
     private CategoryService service;

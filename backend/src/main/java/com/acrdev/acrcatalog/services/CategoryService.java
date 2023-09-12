@@ -3,14 +3,12 @@ package com.acrdev.acrcatalog.services;
 import com.acrdev.acrcatalog.dto.CategoryDTO;
 import com.acrdev.acrcatalog.entities.Category;
 import com.acrdev.acrcatalog.repositories.CategoryRepository;
-import jakarta.persistence.EntityExistsException;
+import com.acrdev.acrcatalog.services.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +39,7 @@ public class CategoryService {
     public CategoryDTO findById(Long id){
 
         if(!repository.existsById(id)){
-            throw new EntityExistsException("Recurso não encontrado");
+            throw new EntityNotFoundException("Entity not found");
         }
         Category category = repository.getReferenceById(id);
 
