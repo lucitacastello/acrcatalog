@@ -36,9 +36,9 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public CategoryDTO findById(Long id){
+    public CategoryDTO findById(Long id) {
 
-        if(!repository.existsById(id)){
+        if (!repository.existsById(id)) {
             throw new EntityNotFoundException("Entity not found");
         }
         Category category = repository.getReferenceById(id);
@@ -52,6 +52,13 @@ public class CategoryService {
 
 //        return repository.findById(id).map(CategoryDTO::new)
 //                .orElseThrow();
+    }
 
+    @Transactional
+    public CategoryDTO insert(CategoryDTO dto) {
+        Category entity = new Category();
+        entity.setName(dto.getName());
+        entity = repository.save(entity);
+        return new CategoryDTO(entity);
     }
 }
