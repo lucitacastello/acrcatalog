@@ -2,6 +2,7 @@ package com.acrdev.acrcatalog.entities;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.util.Objects;
 @Entity
 @Table(name = "tb_category")
@@ -12,6 +13,15 @@ public class Category {
     private Long id;
 
     private String name;
+
+    //armazenando no formato UTC que é 3 horas na frente
+
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") //sem timezone no DB
+    private Instant createdAt;
+
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") //sem timezone no DB
+    private Instant updateAt;
+
 
     public Category() {
     }
@@ -36,6 +46,26 @@ public class Category {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdateAt() {
+        return updateAt;
+    }
+
+    //para armazenar direto os dados de auditoria
+    @PrePersist
+    public void prePersist(){
+        createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        updateAt = Instant.now();
+    }
+
 
     @Override
     public boolean equals(Object o) {
