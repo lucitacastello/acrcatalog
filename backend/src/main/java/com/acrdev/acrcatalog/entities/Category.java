@@ -19,7 +19,7 @@ public class Category {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") //sem timezone no DB
     private Instant createdAt;
 
-    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") //sem timezone no DB
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") //sem timezone no DB - UTC
     private Instant updateAt;
 
 
