@@ -1,6 +1,7 @@
 package com.acrdev.acrcatalog.repositories;
 
 import com.acrdev.acrcatalog.entities.Product;
+import com.acrdev.acrcatalog.tests.Factory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,27 @@ public class ProductRepositoryTests {
     private ProductRepository repository;
 
     private long idExists;
-    private long nonExistingId ;
+    private long nonExistingId;
+    private long countTotalProduct;
+
 
     @BeforeEach
     void setUp() throws Exception {
-         idExists = 1L;
+        idExists = 1L;
         nonExistingId = 1000L;
+        countTotalProduct = 25L;
+    }
+
+    @Test
+    public void saveShouldPersistWithAutoIncrementWhenIdIsNull() {
+
+        Product product = Factory.createProduct();
+        product.setId(null);
+
+        product = repository.save(product);
+
+        Assertions.assertNotNull(product.getId());
+        Assertions.assertEquals(countTotalProduct + 1, product.getId());
     }
 
     @Test
@@ -30,7 +46,6 @@ public class ProductRepositoryTests {
         Optional<Product> result = repository.findById(idExists);
         Assertions.assertFalse(result.isPresent());
     }
-
 
 
     // mudança no deleteById da versão 3.X.X do spring boot - ele não lança exception
