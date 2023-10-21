@@ -53,7 +53,7 @@ public class ProductServiceTests {
     @BeforeEach
     void setUp() throws Exception {
         existingId = 1L;
-        nonExistingId = 2L;
+        nonExistingId = 400L;
         dependentId = 3L;
 
         product = Factory.createProduct();
