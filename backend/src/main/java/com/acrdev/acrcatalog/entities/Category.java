@@ -3,7 +3,10 @@ package com.acrdev.acrcatalog.entities;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+
 @Entity
 @Table(name = "tb_category")
 public class Category {
@@ -22,6 +25,10 @@ public class Category {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") //sem timezone no DB - UTC
     private Instant updateAt;
 
+    //mapeando categoria e produtos
+    // a tabela já está mapeada em product
+    @ManyToMany(mappedBy = "categories") //nome do atributo em product
+    private Set<Product> products = new HashSet<>();
 
     public Category() {
     }
@@ -53,6 +60,10 @@ public class Category {
 
     public Instant getUpdateAt() {
         return updateAt;
+    }
+
+    public Set<Product> getProducts() {
+        return products;
     }
 
     //para armazenar direto os dados de auditoria
