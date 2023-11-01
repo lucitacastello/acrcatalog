@@ -20,7 +20,7 @@ public class User {
 
     //associação - somente o usuario conhece os roles - unidirecional
     // associação Muitos para muitos
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER) //forçar carregar os roles
     @JoinTable(name = "tb_user_role",
     joinColumns = @JoinColumn(name = "user_id"), //PK ref tabela onde estou
      inverseJoinColumns = @JoinColumn(name = "role_id")) //chave do outro lado
