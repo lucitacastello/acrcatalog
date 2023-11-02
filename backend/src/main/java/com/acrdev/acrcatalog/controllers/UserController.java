@@ -2,6 +2,7 @@ package com.acrdev.acrcatalog.controllers;
 
 import com.acrdev.acrcatalog.dto.UserDTO;
 import com.acrdev.acrcatalog.dto.UserInsertDTO;
+import com.acrdev.acrcatalog.dto.UserUpdateDTO;
 import com.acrdev.acrcatalog.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO dto){
-        dto = service.update(id, dto);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto){
+       UserDTO newDto = service.update(id, dto);
+        return ResponseEntity.ok(newDto);
     }
 
     @DeleteMapping("/{id}")

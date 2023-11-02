@@ -3,6 +3,7 @@ package com.acrdev.acrcatalog.services;
 import com.acrdev.acrcatalog.dto.RoleDTO;
 import com.acrdev.acrcatalog.dto.UserDTO;
 import com.acrdev.acrcatalog.dto.UserInsertDTO;
+import com.acrdev.acrcatalog.dto.UserUpdateDTO;
 import com.acrdev.acrcatalog.entities.Role;
 import com.acrdev.acrcatalog.entities.User;
 import com.acrdev.acrcatalog.repositories.RoleRepository;
@@ -57,7 +58,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO update(Long id, UserDTO dto) {
+    public UserDTO update(Long id, UserUpdateDTO dto) {
         try {
             User entity = repository.getReferenceById(id);
             copyDtoToEntity(dto, entity);

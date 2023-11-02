@@ -3,7 +3,6 @@ package com.acrdev.acrcatalog.dto;
 import com.acrdev.acrcatalog.entities.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 
 import java.util.HashSet;
 import java.util.Set;
