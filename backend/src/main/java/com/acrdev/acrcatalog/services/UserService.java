@@ -6,6 +6,7 @@ import com.acrdev.acrcatalog.dto.UserInsertDTO;
 import com.acrdev.acrcatalog.dto.UserUpdateDTO;
 import com.acrdev.acrcatalog.entities.Role;
 import com.acrdev.acrcatalog.entities.User;
+import com.acrdev.acrcatalog.projections.UserDetailsProjection;
 import com.acrdev.acrcatalog.repositories.RoleRepository;
 import com.acrdev.acrcatalog.repositories.UserRepository;
 import com.acrdev.acrcatalog.services.exceptions.ResourceNotFoundException;
@@ -14,15 +15,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder; //na classe AppConfig
+    private PasswordEncoder passwordEncoder; //na classe AppConfig
 
     @Autowired
     private UserRepository repository;
@@ -94,6 +100,22 @@ public class UserService {
             Role role = roleRepository.getReferenceById(roleDTO.getId());
             entity.getRoles().add(role);
         }
+    }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<UserDetailsProjection> list = repository.searchUserAndRolesByEmail(username);
+
+        if (list.size() == 0) {
+            throw new UsernameNotFoundException("Email not found");
+        }
+
+        User user = new User();
+        user.setEmail(username);
+        user.setPassword(list.get(0).getPassword());
+        for (UserDetailsProjection projection : list){
+            user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
+        }
+        return user;
     }
 }
