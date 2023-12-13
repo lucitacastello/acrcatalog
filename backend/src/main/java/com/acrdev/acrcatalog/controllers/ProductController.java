@@ -1,6 +1,7 @@
 package com.acrdev.acrcatalog.controllers;
 
 import com.acrdev.acrcatalog.dto.ProductDTO;
+import com.acrdev.acrcatalog.projections.ProductProjection;
 import com.acrdev.acrcatalog.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,17 @@ public class ProductController {
     private ProductService service;
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
-        //PARÂMETROS: page, size, sort
-        Page<ProductDTO> list = service.findAllPaged(pageable);
+    public ResponseEntity<Page<ProductProjection>> findAll(Pageable pageable) {
+        Page<ProductProjection> list = service.testQuery(pageable);
         return ResponseEntity.ok().body(list);
     }
+
+//    @GetMapping
+//    public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
+//        //PARÂMETROS: page, size, sort
+//        Page<ProductDTO> list = service.findAllPaged(pageable);
+//        return ResponseEntity.ok().body(list);
+//    }
 
 //    @GetMapping
 //    public ResponseEntity<Page<ProductDTO>> findAll(

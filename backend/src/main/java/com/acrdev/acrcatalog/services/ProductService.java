@@ -4,6 +4,7 @@ import com.acrdev.acrcatalog.dto.CategoryDTO;
 import com.acrdev.acrcatalog.dto.ProductDTO;
 import com.acrdev.acrcatalog.entities.Category;
 import com.acrdev.acrcatalog.entities.Product;
+import com.acrdev.acrcatalog.projections.ProductProjection;
 import com.acrdev.acrcatalog.repositories.CategoryRepository;
 import com.acrdev.acrcatalog.repositories.ProductRepository;
 import com.acrdev.acrcatalog.services.exceptions.DatabaseException;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
 
 @Service
 public class ProductService {
@@ -30,6 +33,12 @@ public class ProductService {
     public Page<ProductDTO> findAllPaged(Pageable pageable){
         Page<Product> list = repository.findAll(pageable);
         return list.map(ProductDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductProjection> testQuery(Pageable pageable) {
+        return repository.searchProducts(Arrays.asList(1L, 3L), "", pageable);
+
     }
 
 //    @Transactional(readOnly = true)
@@ -96,4 +105,5 @@ public class ProductService {
         }
 
     }
+
 }
