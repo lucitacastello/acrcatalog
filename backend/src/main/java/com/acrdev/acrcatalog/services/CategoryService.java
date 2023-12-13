@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CategoryService {
 
@@ -21,10 +24,16 @@ public class CategoryService {
     private CategoryRepository repository;
 
     @Transactional(readOnly = true) //lock DB
-    public Page<CategoryDTO> findAllPaged(Pageable pageable) {
-        Page<Category> list = repository.findAll(pageable);
-        return list.map(CategoryDTO::new);
+    public List<CategoryDTO> findAll() {
+        List<Category> list = repository.findAll();
+        return list.stream().map(CategoryDTO::new).collect(Collectors.toList());
     }
+
+//    @Transactional(readOnly = true) //lock DB
+//    public Page<CategoryDTO> findAllPaged(Pageable pageable) {
+//        Page<Category> list = repository.findAll(pageable);
+//        return list.map(CategoryDTO::new);
+//    }
 
 //    @Transactional(readOnly = true) //lock DB
 //    public Page<CategoryDTO> findAllPaged(PageRequest pageRequest) {
@@ -100,4 +109,6 @@ public class CategoryService {
             throw new DatabaseException("Falha de integridade referencial");
         }
     }
+
+
 }

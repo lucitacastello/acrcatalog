@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
@@ -19,12 +20,19 @@ public class CategoryController {
     @Autowired
     private CategoryService service;
 
+    //sem paginação
     @GetMapping
-    public ResponseEntity<Page<CategoryDTO>> findAll(Pageable pageable)    {
-        //PARÂMETROS: page, size, sort
-        Page<CategoryDTO> list = service.findAllPaged(pageable);
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<CategoryDTO>> findAll()    {
+        List<CategoryDTO> dto = service.findAll();
+        return ResponseEntity.ok().body(dto);
     }
+// não é paginada
+//    @GetMapping
+//    public ResponseEntity<Page<CategoryDTO>> findAll(Pageable pageable)    {
+//        //PARÂMETROS: page, size, sort
+//        Page<CategoryDTO> list = service.findAllPaged(pageable);
+//        return ResponseEntity.ok().body(list);
+//    }
 
 //    @GetMapping
 //    public ResponseEntity<Page<CategoryDTO>> findAll(
