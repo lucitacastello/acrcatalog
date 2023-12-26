@@ -15,28 +15,27 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 //    @Query(nativeQuery = true, value = """
 //            SELECT DISTINCT tb_product.id, tb_product.name
 //            FROM tb_product
-//            INNER JOIN tb_product_category ON tb_product.id = tb_product_category.product_id
+//            INNER JOIN tb_product_category ON tb_product_category.product_id = tb_product.id
 //            WHERE tb_product_category.category_id IN :categoryIds
-//            AND LOWER (tb_product.name) LIKE LOWER(CONCAT('%', :name, '%'))
-//            ORDER BY  tb_product.name
-//            """, countQuery = """
-//                SELECT COUNT(*) FROM(
-//                SELECT DISTINCT tb_product.id, tb_product.name
-//                FROM tb_product
-//                INNER JOIN tb_product_category ON tb_product.id = tb_product_category.product_id
-//                WHERE tb_product_category.category_id IN :categoryIds
-//                AND LOWER (tb_product.name) LIKE LOWER(CONCAT('%', :name, '%'))
-//                ORDER BY  tb_product.name
-//                ) AS tb_result
-//            """)
+//            AND LOWER(tb_product.name) LIKE LOWER(CONCAT('%',:name,'%'))
+//            ORDER BY tb_product.name
+//            """,
+//            countQuery = """
+//                    SELECT COUNT(*) FROM (
+//                    SELECT DISTINCT tb_product.id, tb_product.name
+//                    FROM tb_product
+//                    INNER JOIN tb_product_category ON tb_product_category.product_id = tb_product.id
+//                    WHERE tb_product_category.category_id IN :categoryIds
+//                    AND LOWER(tb_product.name) LIKE LOWER(CONCAT('%',:name,'%'))
+//                    ) AS tb_result
+//                    """)
 
-    // countQuery pq tem uma consulta paginada
     @Query(nativeQuery = true, value = """
             SELECT DISTINCT tb_product.id, tb_product.name
             FROM tb_product
             INNER JOIN tb_product_category ON tb_product_category.product_id = tb_product.id
-            WHERE tb_product_category.category_id IN :categoryIds
-            AND LOWER(tb_product.name) LIKE LOWER(CONCAT('%',:name,'%'))
+            WHERE (:categoryIds IS NULL OR tb_product_category.category_id IN :categoryIds)
+            AND (LOWER(tb_product.name) LIKE LOWER(CONCAT('%',:name,'%')))
             ORDER BY tb_product.name
             """,
             countQuery = """
@@ -44,8 +43,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     SELECT DISTINCT tb_product.id, tb_product.name
                     FROM tb_product
                     INNER JOIN tb_product_category ON tb_product_category.product_id = tb_product.id
-                    WHERE tb_product_category.category_id IN :categoryIds
-                    AND LOWER(tb_product.name) LIKE LOWER(CONCAT('%',:name,'%'))
+                    WHERE (:categoryIds IS NULL OR tb_product_category.category_id IN :categoryIds)
+                    AND (LOWER(tb_product.name) LIKE LOWER(CONCAT('%',:name,'%')))
                     ) AS tb_result
                     """)
     Page<ProductProjection> searchProducts(List<Long> categoryIds, String name, Pageable pageable);
