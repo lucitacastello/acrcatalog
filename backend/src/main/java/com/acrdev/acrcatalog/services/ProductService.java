@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -37,23 +39,44 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductProjection> findAllPaged(String name, String categoryId, Pageable pageable) {
+    public Page<ProductDTO> findAllPaged(String name, String categoryId, Pageable pageable) {
 
-//        String[] vet = categoryId.split(",");
-//        List<String> list = Arrays.asList(vet);
-//        List<Long> categoryIds = list.stream().map(x -> Long.parseLong(x)).toList();
-        // ou
-
-//        List<Long>categoryIds = Arrays.asList(categoryId.split(",")).stream().map(Long::parseLong).toList();
-        // ou
         List<Long> categoryIds = Arrays.asList();
         if (!"0".equals(categoryId)) {
             categoryIds = Arrays.stream(categoryId.split(",")).map(Long::parseLong).toList();
         }
 
-        return repository.searchProducts(categoryIds, name, pageable);
+        Page<ProductProjection> page = repository.searchProducts(categoryIds, name, pageable);
+        List<Long> productIds = page.map(x -> x.getId()).toList();
+
+        List<Product> entities = repository.searchProductsWithCategories(productIds);
+
+        List<ProductDTO> dtos = entities.stream().map(p -> new ProductDTO(p, p.getCategories())).collect(Collectors.toList());
+
+        Page<ProductDTO> pageDTO = new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
+
+        return pageDTO;
 
     }
+
+//    @Transactional(readOnly = true)
+//    public Page<ProductProjection> findAllPaged(String name, String categoryId, Pageable pageable) {
+//
+////        String[] vet = categoryId.split(",");
+////        List<String> list = Arrays.asList(vet);
+////        List<Long> categoryIds = list.stream().map(x -> Long.parseLong(x)).toList();
+//        // ou
+//
+////        List<Long>categoryIds = Arrays.asList(categoryId.split(",")).stream().map(Long::parseLong).toList();
+//        // ou
+//        List<Long> categoryIds = Arrays.asList();
+//        if (!"0".equals(categoryId)) {
+//            categoryIds = Arrays.stream(categoryId.split(",")).map(Long::parseLong).toList();
+//        }
+//
+//        return repository.searchProducts(categoryIds, name, pageable);
+//
+//    }
 
 //    @Transactional(readOnly = true)
 //    public Page<ProductDTO> findAllPaged(PageRequest pageRequest){
