@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -30,14 +31,27 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAllPaged(Pageable pageable){
+    public Page<ProductDTO> findAllPaged_(Pageable pageable) {
         Page<Product> list = repository.findAll(pageable);
         return list.map(ProductDTO::new);
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductProjection> testQuery(Pageable pageable) {
-        return repository.searchProducts(Arrays.asList(1L, 3L), "", pageable);
+    public Page<ProductProjection> findAllPaged(String name, String categoryId, Pageable pageable) {
+
+//        String[] vet = categoryId.split(",");
+//        List<String> list = Arrays.asList(vet);
+//        List<Long> categoryIds = list.stream().map(x -> Long.parseLong(x)).toList();
+        // ou
+
+//        List<Long>categoryIds = Arrays.asList(categoryId.split(",")).stream().map(Long::parseLong).toList();
+        // ou
+        List<Long> categoryIds = Arrays.asList();
+        if (!"0".equals(categoryId)) {
+            categoryIds = Arrays.stream(categoryId.split(",")).map(Long::parseLong).toList();
+        }
+
+        return repository.searchProducts(categoryIds, name, pageable);
 
     }
 
@@ -48,8 +62,8 @@ public class ProductService {
 //    }
 
     @Transactional(readOnly = true)
-    public ProductDTO findById(Long id){
-        if(! repository.existsById(id)){
+    public ProductDTO findById(Long id) {
+        if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Entity not found");
         }
         Product product = repository.getReferenceById(id);
@@ -58,35 +72,36 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDTO insert(ProductDTO dto){
+    public ProductDTO insert(ProductDTO dto) {
         Product entity = new Product();
         //método auxiliar
         copyDtoToEntity(dto, entity);
-        
+
         entity = repository.save(entity);
         return new ProductDTO(entity);
     }
+
     @Transactional
-    public ProductDTO update(Long id, ProductDTO dto){
-        try{
+    public ProductDTO update(Long id, ProductDTO dto) {
+        try {
             Product entity = repository.getReferenceById(id);
             //método auxiliar
             copyDtoToEntity(dto, entity);
             entity = repository.save(entity);
             return new ProductDTO(entity);
-        } catch (EntityNotFoundException ex){
+        } catch (EntityNotFoundException ex) {
             throw new ResourceNotFoundException("Id not found: " + id);
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
-    public void delete(Long id){
-        if(!repository.existsById(id)){
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Recurso não encontrado");
         }
         try {
             repository.deleteById(id);
-        } catch (DataIntegrityViolationException ex){
+        } catch (DataIntegrityViolationException ex) {
             throw new DatabaseException("Falha de integridade referencial");
         }
     }
@@ -99,7 +114,7 @@ public class ProductService {
         entity.setDate(dto.getDate());
 
         entity.getCategories().clear();
-        for(CategoryDTO catDto : dto.getCategories()){
+        for (CategoryDTO catDto : dto.getCategories()) {
             Category category = categoryRepository.getReferenceById(catDto.getId());
             entity.getCategories().add(category);
         }
