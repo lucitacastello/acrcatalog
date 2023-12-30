@@ -1,8 +1,9 @@
 package com.acrdev.acrcatalog.projections;
 
-public interface ProductProjection {
+//- usando OO Genérica
+public interface ProductProjection extends IdProjection<Long> {
 
-    Long getId();
+    //Long getId(); -herança da interface Genérica
     String getName();
 
 }

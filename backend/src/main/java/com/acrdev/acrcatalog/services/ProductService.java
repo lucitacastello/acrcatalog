@@ -39,6 +39,7 @@ public class ProductService {
         return list.map(ProductDTO::new);
     }
 
+    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAllPaged(String name, String categoryId, Pageable pageable) {
 
@@ -53,7 +54,8 @@ public class ProductService {
         //desordenado
         List<Product> entities = repository.searchProductsWithCategories(productIds);
         //método aux para ordenar a list
-        entities = Utils.replace(page.getContent(), entities);
+        //casting para Generics
+        entities = (List<Product>) Utils.replace(page.getContent(), entities);
         List<ProductDTO> dtos = entities.stream().map(p -> new ProductDTO(p, p.getCategories())).collect(Collectors.toList());
 
         Page<ProductDTO> pageDTO = new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());

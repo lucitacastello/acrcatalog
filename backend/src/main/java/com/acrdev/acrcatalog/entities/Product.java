@@ -1,5 +1,6 @@
 package com.acrdev.acrcatalog.entities;
 
+import com.acrdev.acrcatalog.projections.IdProjection;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -9,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tb_product")
-public class Product {
+public class Product implements IdProjection<Long> { //OO Genérica
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +47,7 @@ public class Product {
         this.date = date;
     }
 
+    @Override // OO genérica - implements
     public Long getId() {
         return id;
     }
