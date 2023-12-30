@@ -1,7 +1,6 @@
 package com.acrdev.acrcatalog.controllers;
 
 import com.acrdev.acrcatalog.dto.ProductDTO;
-import com.acrdev.acrcatalog.projections.ProductProjection;
 import com.acrdev.acrcatalog.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

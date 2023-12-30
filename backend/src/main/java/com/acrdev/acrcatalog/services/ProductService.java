@@ -9,6 +9,7 @@ import com.acrdev.acrcatalog.repositories.CategoryRepository;
 import com.acrdev.acrcatalog.repositories.ProductRepository;
 import com.acrdev.acrcatalog.services.exceptions.DatabaseException;
 import com.acrdev.acrcatalog.services.exceptions.ResourceNotFoundException;
+import com.acrdev.acrcatalog.util.Utils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -49,8 +50,10 @@ public class ProductService {
         Page<ProductProjection> page = repository.searchProducts(categoryIds, name, pageable);
         List<Long> productIds = page.map(x -> x.getId()).toList();
 
+        //desordenado
         List<Product> entities = repository.searchProductsWithCategories(productIds);
-
+        //método aux para ordenar a list
+        entities = Utils.replace(page.getContent(), entities);
         List<ProductDTO> dtos = entities.stream().map(p -> new ProductDTO(p, p.getCategories())).collect(Collectors.toList());
 
         Page<ProductDTO> pageDTO = new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
