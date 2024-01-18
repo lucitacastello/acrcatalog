@@ -51,7 +51,7 @@ public class AuthService {
         entity = passwordRecoveryRepository.save(entity);
 
         String bodyMessage = "Acesse o link para definir uma nova senha\n\n"
-                + recoverUri + token ;
+                + recoverUri + token + ". Validade de " + tokenMinutes + " minutos";
 
         // envia email para recuperação com o token
         emailService.sendEmail(body.getEmail(),"Recuperação de senha", bodyMessage  );
