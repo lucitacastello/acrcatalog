@@ -1,6 +1,7 @@
 package com.acrdev.acrcatalog.services;
 
 import com.acrdev.acrcatalog.dto.EmailDTO;
+import com.acrdev.acrcatalog.dto.NewPasswordDTO;
 import com.acrdev.acrcatalog.entities.PasswordRecover;
 import com.acrdev.acrcatalog.entities.User;
 import com.acrdev.acrcatalog.repositories.PasswordRecoveryRepository;
@@ -8,10 +9,12 @@ import com.acrdev.acrcatalog.repositories.UserRepository;
 import com.acrdev.acrcatalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,6 +29,9 @@ public class AuthService {
     private String recoverUri;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -33,6 +39,7 @@ public class AuthService {
 
     @Autowired
     private EmailService emailService;
+
 
     @Transactional
     public void createRecoverToken(EmailDTO body) {
@@ -55,5 +62,24 @@ public class AuthService {
 
         // envia email para recuperação com o token
         emailService.sendEmail(body.getEmail(),"Recuperação de senha", bodyMessage  );
+    }
+
+    @Transactional
+    public void saveNewPassword(NewPasswordDTO body) {
+
+        //busca tokens não expirado
+        List<PasswordRecover> result = passwordRecoveryRepository.searchValidTokens(body.getToken(), Instant.now());
+
+        if(result.size() == 0){
+            //não encontrou token
+            throw new ResourceNotFoundException("Token inválido");
+        }
+        //se token válido - salvar nova senha no DB
+        //result.get(0) - primeiro token que chegou
+        User user = userRepository.findByEmail(result.get(0).getEmail());
+
+        //nova senha com BCrypty
+        user.setPassword(passwordEncoder.encode(body.getPassword()));
+        user = userRepository.save(user);
     }
 }
