@@ -43,6 +43,14 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
+    // usuário logado
+    @PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN')")
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> findMe(){
+        UserDTO dto = service.findMe();
+        return ResponseEntity.ok(dto);
+    }
+
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 //     para usuário novo poder se cadastrar - signup
     @PostMapping

@@ -36,6 +36,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private AuthService authService;
+
     @Transactional(readOnly = true)
     public Page<UserDTO> findAllPaged(Pageable pageable) {
         Page<User> page = repository.findAll(pageable);
@@ -45,10 +48,16 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Resource not found");
+            throw new ResourceNotFoundException("Entity not found");
         }
-
         User user = repository.getReferenceById(id);
+        return new UserDTO(user);
+    }
+
+    //usuário logado - token que chegou na requisição
+    @Transactional(readOnly = true)
+    public UserDTO findMe() {
+        User user = authService.authenticated() ;
         return new UserDTO(user);
     }
 
