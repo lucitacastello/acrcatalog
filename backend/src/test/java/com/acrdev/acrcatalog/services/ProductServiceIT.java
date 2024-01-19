@@ -54,7 +54,7 @@ public class ProductServiceIT {
     public void findAllPageShouldReturnPageWhenPage0Size10(){
 
         PageRequest pageRequest = PageRequest.of(0,10);
-        Page<ProductDTO> result = service.findAllPaged(pageRequest);
+        Page<ProductDTO> result = service.findAllPaged_(pageRequest);
 
         Assertions.assertFalse(result.isEmpty());
         Assertions.assertEquals(0, result.getNumber());

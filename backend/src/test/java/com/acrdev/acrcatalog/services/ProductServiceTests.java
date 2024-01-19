@@ -90,7 +90,7 @@ public class ProductServiceTests {
     public void findAllPageShouldReturnPage(){
 
         Pageable pageable = PageRequest.of(0,10); //tamanho da página
-        Page<ProductDTO> result = service.findAllPaged(pageable);
+        Page<ProductDTO> result = service.findAllPaged_(pageable);
 
         Assertions.assertNotNull(result);
         Mockito.verify(repository).findAll(pageable);

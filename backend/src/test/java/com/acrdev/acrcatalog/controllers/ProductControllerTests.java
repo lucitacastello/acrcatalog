@@ -64,7 +64,7 @@ public class ProductControllerTests {
 
         //simula os comportamentos
 
-        when(service.findAllPaged(any())).thenReturn(page);
+        when(service.findAllPaged_(any())).thenReturn(page);
 
         when(service.findById(existingId)).thenReturn(productDTO);
         when(service.findById(nonExistingId)).thenThrow(ResourceNotFoundException.class);
